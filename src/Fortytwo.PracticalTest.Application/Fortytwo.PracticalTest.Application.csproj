@@ -17,4 +17,7 @@
       <InternalsVisibleTo Include="$(AssemblyName).UnitTests" />
       <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Security\" />
+  </ItemGroup>
 </Project>
