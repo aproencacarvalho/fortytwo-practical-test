@@ -20,6 +20,7 @@ public static class ApplicationResponseExtensions
             item.Id,
             item.Title,
             item.Body,
+            item.ExternalTitle ?? string.Empty,
             item.CreatedByUserId,
             item.CreatedAt);
 }

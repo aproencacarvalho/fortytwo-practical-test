@@ -8,11 +8,13 @@ namespace Fortytwo.PracticalTest.Application.Posts.Queries;
 internal class GetPostByIdQueryHandler : IGetPostByIdQueryHandler
 {
     private readonly IPostsReadRepository _postReadRepository;
+    private readonly IExternalPostsService _externalPostsService;
     private readonly ILogger<GetPostByIdQueryHandler> _logger;
 
-    public GetPostByIdQueryHandler(IPostsReadRepository postReadRepository, ILogger<GetPostByIdQueryHandler> logger)
+    public GetPostByIdQueryHandler(IPostsReadRepository postReadRepository, IExternalPostsService externalPostsService, ILogger<GetPostByIdQueryHandler> logger)
     {
         _postReadRepository = postReadRepository ?? throw new ArgumentNullException(nameof(postReadRepository));
+        _externalPostsService = externalPostsService ?? throw new ArgumentNullException(nameof(externalPostsService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -26,7 +28,9 @@ internal class GetPostByIdQueryHandler : IGetPostByIdQueryHandler
                 return OperationResult<GetPostByIdResponse>.NotFound();
             }
 
-            var response = new GetPostByIdResponse(post.Id, post.Title, post.Body, post.CreatedByUserId, post.CreatedAt);
+            var externalTitle = await _externalPostsService.GetPostTitleByPostIdAsync(query.Id);
+
+            var response = new GetPostByIdResponse(post.Id, post.Title, post.Body, externalTitle, post.CreatedByUserId, post.CreatedAt);
             return OperationResult<GetPostByIdResponse>.Success(response);
         }
         catch (Exception ex)
