@@ -5,6 +5,7 @@ using Fortytwo.PracticalTest.Application.Extensions;
 using Fortytwo.PracticalTest.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 namespace Fortytwo.PracticalTest.Api
 {
@@ -14,34 +15,13 @@ namespace Fortytwo.PracticalTest.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddApplicationServices();
-            builder.Services.AddInfrastructureServices();
-            builder.Services.AddApiServices();
-                        
-            builder.Services.AddAuthentication(o =>
-            {
-                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(o =>
-            {
-                o.TokenValidationParameters = new TokenValidationParameters
-                {
-                ValidIssuer = builder.Configuration["Authentication:Jwt:Issuer"],
-                    ValidAudience = builder.Configuration["Authentication:Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey
-                        (Encoding.UTF8.GetBytes(builder.Configuration["Authentication:Jwt:Key"])),
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = false,
-                    ValidateIssuerSigningKey = true
-                };
-            });
-
-            builder.Services.AddAuthorization();
-
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddApplicationServices()
+                            .AddInfrastructureServices()
+                            .AddApiServices()
+                            .AddJwtAuthentication(builder.Configuration)
+                            .AddAuthorization()
+                            .AddEndpointsApiExplorer()
+                            .AddSwagger(builder.Configuration);
             
             var app = builder.Build();
 

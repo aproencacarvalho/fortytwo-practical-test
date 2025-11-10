@@ -25,7 +25,12 @@ namespace Fortytwo.PracticalTest.Api.Endpoints
 
             app.MapPost("/posts", [Authorize] async (CreatePostRequestDto request, ICreatePostCommandHandler createPostCommandHandler, IAuthenticatedUserService authenticatedUserService, CancellationToken token, ILogger<Program> logger) =>
             {
-                var result = await createPostCommandHandler.ExecuteRequestHandler(new CreatePostCommand(request.Title, request.Body, authenticatedUserService.GetAuthenticatedUserId()), token, logger);
+                var authenticatedUserId = authenticatedUserService.GetAuthenticatedUserId();
+                if (authenticatedUserId is null)
+                {
+                    return Results.Unauthorized();
+                }
+                var result = await createPostCommandHandler.ExecuteRequestHandler(new CreatePostCommand(request.Title, request.Body, authenticatedUserId.Value), token, logger);
                 return result.ToEndpointResult(commandResult => commandResult);
             });
         }

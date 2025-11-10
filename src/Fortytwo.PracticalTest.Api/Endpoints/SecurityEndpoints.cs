@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Fortytwo.PracticalTest.Api.Abstractions;
 using Fortytwo.PracticalTest.Api.Abstractions.Dtos.Common;
 using Fortytwo.PracticalTest.Application.Abstractions.Common;
 using Microsoft.AspNetCore.Authorization;
@@ -33,7 +34,7 @@ public static class SecurityEndpoints
                 {
                     Subject = new ClaimsIdentity(new[]
                     {
-                        new Claim("Id", user.Id.ToString()),
+                        new Claim(SecurityConstants.ClaimTypeUserId, user.Id.ToString()),
                         new Claim(JwtRegisteredClaimNames.Sub, user.Username),
                         new Claim(JwtRegisteredClaimNames.Email, user.Email)
                     }),
